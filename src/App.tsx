@@ -15,18 +15,20 @@ const trackUrls = [
 
 const App = () => {
   const [trackIndex, setTrackIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const goToNextTrack = () => {
-    setTrackIndex(trackIndex + 1);
-  };
-
-  const { data: tracks } = useQuery({
+  const { data: tracks, isLoading } = useQuery({
     queryKey: ['tracks'],
     queryFn: fetchTracks,
   });
 
-  setIsLoading(true);
+  const goToNextTrack = () => {
+    if (trackIndex + 1 >= tracks?.length) {
+      setTrackIndex(0);
+    } else {
+      setTrackIndex(trackIndex + 1);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -35,14 +37,26 @@ const App = () => {
           Bienvenue sur le blind test codé par un Dieu
         </h1>
       </header>
-      <div className="App-images">
-        <p>{isLoading}</p>
-        <p> Il y a {tracks?.length} musiques disponibles </p>
-        <p>Le nom de la première musique est : {tracks?.[0]?.track?.name}</p>
-        <audio src={trackUrls[trackIndex]} autoPlay controls />
-        <button onClick={goToNextTrack}>Next track</button>
-      </div>
-      <div className="App-buttons"></div>
+      {isLoading ? (
+        <h1 className="App-title">LOADING....</h1>
+      ) : (
+        <>
+          <div className="App-images">
+            <p>{isLoading}</p>
+            <p> Il y a {tracks?.length} musiques disponibles </p>
+            <p>
+              Le nom de la musique est : {tracks?.[trackIndex]?.track?.name}
+            </p>
+            <audio
+              src={tracks?.[trackIndex]?.track?.preview_url}
+              autoPlay
+              controls
+            />
+            <button onClick={goToNextTrack}>Next track</button>
+          </div>
+          <div className="App-buttons"></div>
+        </>
+      )}
     </div>
   );
 };
