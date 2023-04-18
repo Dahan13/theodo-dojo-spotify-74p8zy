@@ -29,6 +29,27 @@ const App = () => {
     }
   };
 
+  const getNextTrack = (increment: number): number => {
+    if (trackIndex + increment >= tracks?.length) {
+      return 0;
+    } else {
+      return trackIndex + increment;
+    }
+  };
+
+  const getResult = (id: number): void => {
+    if (id == trackIndex) {
+      alert('Bravo !');
+    } else {
+      alert('Lost ! Try Again !');
+    }
+  };
+
+  const AlbumCover = (index: Object) => {
+    const src = '' + tracks?.[index?.track]?.track?.album?.images[0]?.url;
+    return <img src={src} style={{ width: 400, height: 400, margin: 10 }} />;
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -54,7 +75,12 @@ const App = () => {
             />
             <button onClick={goToNextTrack}>Next track</button>
           </div>
-          <div className="App-buttons"></div>
+          <AlbumCover track={trackIndex} />
+          <div className="App-buttons">
+            <button onClick={getResult(getNextTrack(1))}> {tracks?.[getNextTrack(1)]?.track?.name} </button>
+            <button onClick={getResult(getNextTrack(1))}> {tracks?.[getNextTrack(2)]?.track?.name} </button>
+            <button onClick={getResult(getNextTrack(1))}> {tracks?.[getNextTrack(3)]?.track?.name} </button>
+          </div>
         </>
       )}
     </div>
