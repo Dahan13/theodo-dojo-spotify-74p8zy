@@ -1,6 +1,9 @@
 import logo from './assets/logo.svg';
 import './App.css';
 import { useState } from 'react';
+import { fetchTracks } from './lib/fetchTracks';
+import { useQuery } from '@tanstack/react-query';
+import { SavedTrack } from 'spotify-types';
 
 const trackUrls = [
   'https://p.scdn.co/mp3-preview/742294f35af9390e799dd96c633788410a332e52',
@@ -10,13 +13,20 @@ const trackUrls = [
   'https://p.scdn.co/mp3-preview/ac28d1b0be285ed3bfd8e9fa5fad133776d7cf36',
 ];
 
-const [trackIndex, setTrackIndex] = useState(0);
-
-const goToNextTrack = () => {
-  setTrackIndex(trackIndex + 1);
-};
-
 const App = () => {
+  const [trackIndex, setTrackIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const goToNextTrack = () => {
+    setTrackIndex(trackIndex + 1);
+  };
+
+  const { data: tracks } = useQuery({
+    queryKey: ['tracks'],
+    queryFn: fetchTracks,
+  });
+
+  setIsLoading(true);
   return (
     <div className="App">
       <header className="App-header">
@@ -26,6 +36,9 @@ const App = () => {
         </h1>
       </header>
       <div className="App-images">
+        <p>{isLoading}</p>
+        <p> Il y a {tracks?.length} musiques disponibles </p>
+        <p>Le nom de la première musique est : {tracks?.[0]?.track?.name}</p>
         <audio src={trackUrls[trackIndex]} autoPlay controls />
         <button onClick={goToNextTrack}>Next track</button>
       </div>
